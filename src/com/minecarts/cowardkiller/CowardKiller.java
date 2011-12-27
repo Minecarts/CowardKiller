@@ -69,10 +69,11 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
                     Player defender = getParentPlayer(event.getEntity());
                     Player attacker = getParentPlayer(((EntityDamageByEntityEvent) event).getDamager());
                     
-                    if(defender != null && attacker != null) {
+                    if(defender != null && attacker != null && !attacker.equals(defender)) {
                         debug("{0} attacked {1}, storing current date for each", attacker.getName(), defender.getName());
-                        lastDamage.put(attacker, new Date());
-                        lastDamage.put(defender, new Date());
+                        Date now = new Date();
+                        lastDamage.put(attacker, now);
+                        lastDamage.put(defender, now);
                     }
                 }
             }
