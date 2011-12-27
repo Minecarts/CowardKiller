@@ -1,0 +1,12 @@
+name: CowardKiller
+description: Deter combat logging by penalizing cowards
+author: megabytes, verrier
+website: http://minecarts.com/
+
+main: com.minecarts.cowardkiller.CowardKiller
+version: ${pom.version}
+
+commands:
+  cowardkiller:
+    aliases: [coward, ck]
+    usage: "/<command> reload"
