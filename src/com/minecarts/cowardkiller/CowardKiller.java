@@ -86,9 +86,20 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
                 Player player = event.getPlayer();
                 
                 if(lastDamage.containsKey(player)) {
-                    if(combatWindow * 1000 > new Date().getTime() - lastDamage.get(player).getTime()) {
-                        debug("Penalizing {0} for logging out while in combat", player.getName());
-                        player.damage(damagePenalty);
+                    float secondsSinceLastDamage = (new Date().getTime() - lastDamage.get(player).getTime()) / 1000;
+                    
+                    if(combatWindow > secondsSinceLastDamage) {
+                        int maxDamage = player.getMaxHealth();
+                        int damage = (int) Math.round(maxDamage + Math.log(1 / secondsSinceLastDamage) * (maxDamage / Math.log(combatWindow)));
+                        
+                        debug("Penalizing {0} with {1} damage for logging out while in combat", player.getName(), damage);
+                        
+                        EntityDamageEvent damageEvent = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, damage);
+                        getServer().getPluginManager().callEvent(damageEvent);
+                        
+                        if(!damageEvent.isCancelled()) {
+                            player.damage(damageEvent.getDamage());
+                        }
                     }
                 }
             }

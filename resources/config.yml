@@ -1,4 +1,3 @@
 debug: false
 
 combatWindow: 15 # seconds
-damagePenalty: 100 # DEATH!
