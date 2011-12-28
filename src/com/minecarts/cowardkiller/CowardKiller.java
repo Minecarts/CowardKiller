@@ -92,7 +92,7 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
                         int maxDamage = player.getMaxHealth();
                         int damage = (int) Math.round(maxDamage + Math.log(1 / secondsSinceLastDamage) * (maxDamage / Math.log(combatWindow)));
                         
-                        debug("Penalizing {0} with {1} damage for logging out while in combat", player.getName(), damage);
+                        log("Penalizing {0} with {1} damage for logging out while in combat", player.getName(), damage);
                         
                         EntityDamageEvent damageEvent = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, damage);
                         getServer().getPluginManager().callEvent(damageEvent);
