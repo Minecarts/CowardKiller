@@ -71,6 +71,7 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
                     
                     if(defender != null && attacker != null && !attacker.equals(defender)) {
                         debug("{0} attacked {1}, storing current date for each", attacker.getName(), defender.getName());
+                        
                         Date now = new Date();
                         lastDamage.put(attacker, now);
                         lastDamage.put(defender, now);
@@ -89,12 +90,11 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
                     float secondsSinceLastDamage = (new Date().getTime() - lastDamage.get(player).getTime()) / 1000;
                     
                     if(combatWindow > secondsSinceLastDamage) {
-                        int maxDamage = player.getMaxHealth();
-                        int damage = (int) Math.round(maxDamage + Math.log(1 / secondsSinceLastDamage) * (maxDamage / Math.log(combatWindow)));
+                        int damage = (int) Math.round(player.getMaxHealth() * (1 - (secondsSinceLastDamage / combatWindow)));
                         
-                        log("Penalizing {0} with {1} damage for logging out while in combat", player.getName(), damage);
+                        log("Penalizing {0} with {1} damage for logging out while in PVP combat", player.getName(), damage);
                         
-                        EntityDamageEvent damageEvent = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CUSTOM, damage);
+                        EntityDamageEvent damageEvent = new PlayerCombatPenaltyEvent(player, damage, event);
                         getServer().getPluginManager().callEvent(damageEvent);
                         
                         if(!damageEvent.isCancelled()) {
@@ -112,7 +112,6 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
     public void onDisable() {
     }
     
-    
     @Override
     public void reloadConfig() {
         super.reloadConfig();
@@ -123,24 +122,6 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
         combatWindow = config.getInt("combatWindow");
         damagePenalty = config.getInt("damagePenalty");
     }
-    
-    
-    public Player getParentPlayer(Object entity) {
-        if(entity instanceof Player) {
-            return (Player) entity;
-        }
-        
-        if(entity instanceof Tameable) {
-            return getParentPlayer(((Tameable) entity).getOwner());
-        }
-        
-        if(entity instanceof Projectile) {
-            return getParentPlayer(((Projectile) entity).getShooter());
-        }
-        
-        return null;
-    }
-    
     
     public void log(String message) {
         log(Level.INFO, message);
@@ -161,5 +142,37 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
     public void debug(String message, Object... args) {
         if(debug) log(message, args);
     }
+    
+    
+    public Player getParentPlayer(Object entity) {
+        if(entity instanceof Player) {
+            return (Player) entity;
+        }
+        
+        if(entity instanceof Tameable) {
+            return getParentPlayer(((Tameable) entity).getOwner());
+        }
+        
+        if(entity instanceof Projectile) {
+            return getParentPlayer(((Projectile) entity).getShooter());
+        }
+        
+        return null;
+    }
+    
+    
+    public class PlayerCombatPenaltyEvent extends EntityDamageEvent {
+        private final PlayerQuitEvent quit;
+        
+        public PlayerCombatPenaltyEvent(Player player, int damage, PlayerQuitEvent quit) {
+            super(player, DamageCause.CUSTOM, damage);
+            this.quit = quit;
+        }
+        
+        public PlayerQuitEvent getQuitEvent() {
+            return this.quit;
+        }
+    }
+    
     
 }
