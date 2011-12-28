@@ -32,12 +32,11 @@ import org.bukkit.entity.Projectile;
 public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
     private static final Logger logger = Logger.getLogger("com.minecarts.cowardkiller"); 
     
-    protected boolean debug;
     protected FileConfiguration config;
+    protected boolean debug;
+    protected int combatWindow;
     
     protected WeakHashMap<Player, Date> lastDamage = new WeakHashMap<Player, Date>();
-    protected int combatWindow;
-    protected int damagePenalty;
     
     
     public void onEnable() {
@@ -120,7 +119,6 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
         
         debug = config.getBoolean("debug");
         combatWindow = config.getInt("combatWindow");
-        damagePenalty = config.getInt("damagePenalty");
     }
     
     public void log(String message) {
@@ -158,20 +156,6 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
         }
         
         return null;
-    }
-    
-    
-    public class PlayerCombatPenaltyEvent extends EntityDamageEvent {
-        private final PlayerQuitEvent quit;
-        
-        public PlayerCombatPenaltyEvent(Player player, int damage, PlayerQuitEvent quit) {
-            super(player, DamageCause.CUSTOM, damage);
-            this.quit = quit;
-        }
-        
-        public PlayerQuitEvent getQuitEvent() {
-            return this.quit;
-        }
     }
     
     
