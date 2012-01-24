@@ -12,7 +12,7 @@
         </repository>
         <repository>
             <id>bukkit</id>
-            <url>http://repo.bukkit.org/content/groups/bukkit_repos/</url>
+            <url>http://repo.bukkit.org/content/repositories/releases/</url>
         </repository>
     </repositories>
     <build>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.0.0-R1-SNAPSHOT</version>
+            <version>1.0.1-R1</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
