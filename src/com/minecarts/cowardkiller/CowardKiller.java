@@ -91,16 +91,16 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin {
                     float secondsSinceLastDamage = lastDamage.elapsed() / 1000;
                     
                     if(combatWindow > secondsSinceLastDamage) {
-                        int damage = (int) Math.round(player.getMaxHealth() * (1 - (secondsSinceLastDamage / combatWindow)));
+                        int penalty = (int) Math.round(player.getMaxHealth() * (1 - (secondsSinceLastDamage / combatWindow)));
                         
-                        log("Penalizing {0} with {1} damage for logging out while in PVP combat", player.getName(), damage);
+                        log("Penalizing {0} with {1} damage for logging out while in PVP combat", player.getName(), penalty);
                         
                         if(lastDamage.getEvent() instanceof EntityDamageByEntityEvent) {
                             EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) lastDamage.getEvent();
-                            log("Last EntityDamageByEntityEvent: {0} inflicted {1} damage on {2}", damageEvent.getDamager(), damageEvent.getDamage(), damageEvent.getEntity());
+                            log("Last EntityDamageByEntityEvent: {0} inflicted {1} damage on {2} {3} seconds ago", damageEvent.getDamager(), damageEvent.getDamage(), damageEvent.getEntity(), lastDamage.elapsed() / 1000);
                         }
                         
-                        PlayerCombatPenaltyEvent penaltyEvent = new PlayerCombatPenaltyEvent(player, damage, event);
+                        PlayerCombatPenaltyEvent penaltyEvent = new PlayerCombatPenaltyEvent(player, penalty, event);
                         getServer().getPluginManager().callEvent(penaltyEvent);
                         
                         if(!penaltyEvent.isCancelled()) {
