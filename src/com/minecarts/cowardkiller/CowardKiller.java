@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.text.MessageFormat;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import org.bukkit.event.EventHandler;
@@ -27,8 +28,6 @@ import org.bukkit.entity.Projectile;
 
 
 public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin implements Listener {
-    private static Logger logger;
-    
     protected FileConfiguration config;
     protected boolean debug;
     protected int combatWindow;
@@ -84,8 +83,6 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin implements L
 
     public void onEnable() {
         reloadConfig();
-        logger = getLogger();
-        
         // reload config command
         getCommand("cowardkiller").setExecutor(new CommandExecutor() {
             public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -103,6 +100,8 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin implements L
         });
 
         log("Version {0} enabled.", getDescription().getVersion());
+
+        Bukkit.getPluginManager().registerEvents(this,this);
     }
     
     public void onDisable() {
@@ -122,7 +121,7 @@ public class CowardKiller extends org.bukkit.plugin.java.JavaPlugin implements L
         log(Level.INFO, message);
     }
     public void log(Level level, String message) {
-        logger.log(level, MessageFormat.format("{0}> {1}", getDescription().getName(), message));
+        getLogger().log(level, MessageFormat.format("{0}> {1}", getDescription().getName(), message));
     }
     public void log(String message, Object... args) {
         log(MessageFormat.format(message, args));
